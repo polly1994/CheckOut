@@ -2,8 +2,9 @@
 The whole program is written Python, also use PyMongo in order to workwith MongoDB, the test is unit testing
 
 ## usage:
+
 '''
-python checkout.py
+python3 checkout.py
 '''
 Simple enter product code, most recent basket information will come up.
 Enter "help" to check item list
