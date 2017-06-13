@@ -1,46 +1,30 @@
-FROM ubuntu:16.04
-MAINTAINER Pengpeng Zhou
+FROM ubuntu:14.04
 
+#Install some
+RUN apt-get clean
 RUN apt-get update
-RUN apt-get install -y git python python-dev vim python-pip
-RUN pip install pymongo
+RUN apt-get install -y g++
+RUN apt-get install -y openssh-server vim git python3 python3-dev python3-pip
+RUN pip3 install pymongo 
+RUN mkdir -p /var/run/sshd
 
-RUN ln -sf python2.7 python
-
-
-# Install MongoDB.
-RUN \
-  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 && \
-  echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' > /etc/apt/sources.list.d/mongodb.list && \
-  apt-get update && \
-  apt-get install -y mongodb-org && \
-  rm -rf /var/lib/apt/lists/*
+#open port 22
+EXPOSE 22
+#CMD ["/usr/sbin/sshd", "-D"]
 
 
-# Create a non-root user for the checkout program
-RUN /usr/sbin/useradd --create-home --home-dir /home/checkout --shell /bin/bash checkout
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+ENV MONGO_MAJOR 3.0
+RUN echo "deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/$MONGO_MAJOR main" > /etc/apt/sources.list.d/mongodb-org.list
+# Install MongoDB
+RUN apt-get update
+RUN sudo apt-get install -y mongodb-org=3.0.4 mongodb-org-server=3.0.4 mongodb-org-shell=3.0.4 mongodb-org-mongos=3.0.4 mongodb-org-tools=3.0.4
 
-# Define mountable directories.
-VOLUME ["/data/db"]
+# Create the MongoDB data directory
+RUN mkdir -p /data/db
 
-# Define default command.
-CMD ["mongod"]
-
-# Switch user
-USER cashier
-
-# Set home environment variable
-ENV HOME /home/checkout
-
-# Clone project from github
-WORKDIR /home/checkout
 RUN git clone https://github.com/polly1994/CheckOut.git
 
-# Expose ports.
-#   - 27017: process
-#   - 28017: http
+#open port 27017 
 EXPOSE 27017
-EXPOSE 28017
-
-#change working directory 
-WORKDIR /home/checkout/CheckOut
+ENTRYPOINT ["usr/bin/mongod"]
