@@ -3,9 +3,9 @@ The whole program is written Python, also use PyMongo in order to workwith Mongo
 
 ## usage:
 
-'''
+```
 python3 checkout.py
-'''
+```
 Simple enter product code, most recent basket information will come up.
 Enter "help" to check item list
 Promotions will be applied automatically to the basket
@@ -29,4 +29,41 @@ For example, the item bought is MK1, AP1, AP1, AP1, OM1, and the basket will be 
 | AP1 | | 6.0 |
 | | APPL| -1.5 |
 | OM1 | | 3.69 |
+
+## Docker usage
+After downloading Dockerfile, run docker build 
+```
+docker build -t checkout . 
+```
+Checkout the available images
+```
+docker images
+```
+Run the container mapping port 4000 to 80
+```
+docker run -p 4000:80 checkout
+```
+Check the name  
+```
+docker ps
+```
+Executa command, the following "reverent_thompson" will be replaced with the container name
+End up inside of the container
+```
+docker exec -t -i reverent_thompson /bin/bash
+```
+```
+cd CheckOut
+python3 checkout.py
+```
+
+## Testing usage
+```
+python test_Promotion.py
+```
+
+## Future work
+set up virtualenv and do tox testing
+
+
 
